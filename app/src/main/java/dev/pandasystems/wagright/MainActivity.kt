@@ -7,9 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,10 +20,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import dagger.hilt.android.AndroidEntryPoint
+import dev.pandasystems.wagright.ui.favorites.FavoritesRoute
+import dev.pandasystems.wagright.ui.swipe.SwipeRoute
 import dev.pandasystems.wagright.ui.theme.WagRightTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -37,10 +38,9 @@ class MainActivity : ComponentActivity() {
 	}
 }
 
-@PreviewScreenSizes
 @Composable
 fun WagRightApp() {
-	var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+	var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.SWIPE) }
 
 	NavigationSuiteScaffold(
 		navigationSuiteItems = {
@@ -60,10 +60,14 @@ fun WagRightApp() {
 		}
 	) {
 		Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-			Greeting(
-				name = "Android",
-				modifier = Modifier.padding(innerPadding)
-			)
+			when (currentDestination) {
+				AppDestinations.SWIPE -> SwipeRoute(
+					modifier = Modifier.padding(innerPadding)
+				)
+				AppDestinations.FAVORITES -> FavoritesRoute(
+					modifier = Modifier.padding(innerPadding)
+				)
+			}
 		}
 	}
 }
@@ -71,25 +75,7 @@ fun WagRightApp() {
 enum class AppDestinations(
 	val label: String,
 	val icon: ImageVector,
-	val contentDescription: String? = null,
 ) {
-	HOME("Home", Icons.Default.Home),
+	SWIPE("Swipe", Icons.Default.Pets),
 	FAVORITES("Favorites", Icons.Default.Favorite),
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-	Text(
-		text = "Hello $name!",
-		modifier = modifier
-	)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-	WagRightTheme {
-		Greeting("Android")
-	}
 }
